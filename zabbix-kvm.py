@@ -3,6 +3,8 @@ import libvirt
 import json
 import sys
 from optparse import OptionParser
+import re
+import xml.etree.ElementTree as ET
 
 def main():
     options = parse_args()
@@ -39,12 +41,33 @@ def kvm_connect():
         sys.exit(1)
     return conn
 
+def extract_vnet_info(xml_desc):
+    root = ET.fromstring(xml_desc)
+    interface = root.find(".//interface[@type='bridge']")
+    if interface is not None:
+        target = interface.find("target")
+        if target is not None:
+            vnet = target.get('dev')
+            bandwidth = interface.find("bandwidth")
+            if bandwidth is not None:
+                inbound = bandwidth.find("inbound")
+                outbound = bandwidth.find("outbound")
+                if inbound is not None and outbound is not None:
+                    return vnet, int(inbound.get('average')), int(outbound.get('average'))
+    return None, None, None
 def domain_list(options):
     conn = kvm_connect()
     r = {"data": []}
     for domain in conn.listAllDomains(0):
         if domain.isActive():
-            r["data"].append({"{#DOMAINNAME}": domain.name()})
+            vnet, inbound, outbound = extract_vnet_info(domain.XMLDesc())
+            if vnet:
+                r["data"].append({
+                    "{#DOMAINNAME}": domain.name(),
+                    "{#DOMAINVNET}": vnet,
+                    "{#INBOUND_LIMIT}": inbound,
+                    "{#OUTBOUND_LIMIT}": outbound
+                })
     print(json.dumps(r))
 
 def cpu(options):

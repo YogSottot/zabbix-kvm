@@ -125,7 +125,7 @@ zabbix_export:
                     host: zabbix-kvm
                     key: 'kvm.domain.mem_usage[{#DOMAINNAME}]'
             - uuid: d6cf75d3579e4db991e87f5c696a209b
-              name: 'KVM: Network traffic on [{#DOMAINNAME}]'
+              name: 'KVM: Network traffic on [{#DOMAINNAME}] via [{#DOMAINVNET}]'
               graph_items:
                 - color: 1A7C11
                   calc_fnc: ALL
@@ -138,3 +138,10 @@ zabbix_export:
                   item:
                     host: zabbix-kvm
                     key: 'kvm.domain.net_out[{#DOMAINNAME}]'
+          trigger_prototypes:
+            - uuid: a5605022e3a8429f89f69fea6d4b59e0
+              expression: |
+                min(/zabbix-kvm/kvm.domain.net_in[{#DOMAINNAME}],15m)>={#INBOUND_LIMIT}*1024*8 or
+                min(/zabbix-kvm/kvm.domain.net_out[{#DOMAINNAME}],15m)>={#OUTBOUND_LIMIT}*1024*8
+              name: 'KVM: High bandwidth usage on [{#DOMAINNAME}] via [{#DOMAINVNET}] at limit for 15 minutes'
+              priority: WARNING
