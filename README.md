@@ -1,6 +1,6 @@
 referred from https://github.com/bushvin/zabbix-kvm-res
 
-1. pip install libvirt-python or yum install python36-libvirt or apt install python3-libvirt  
+1. ```pip install libvirt-python``` or ```yum install python36-libvirt``` or ```apt install python3-libvirt```  
 2. cp zabbix-kvm.py to /etc/zabbix/zabbix_agentd.d/scripts/zbx-kvm/
 3. cp userparameter_zabbix-kvm.conf to /etc/zabbix/zabbix_agentd2.d/
 4. import zabbix_kvm.yaml into zabbix frontend. I work in zabbix 7.0 (zabbix kvm.zml is old version without grpahs)
