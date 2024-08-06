@@ -1,0 +1,140 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    - uuid: 340455c1479a4e26bcf11f195573ac8c
+      template: zabbix-kvm
+      name: zabbix-kvm
+      groups:
+        - name: Templates
+      discovery_rules:
+        - uuid: 471ed9c24e8d45439233955986a1e988
+          name: kvm.domain.discover
+          key: kvm.domain.discover
+          delay: '60'
+          lifetime: 30d
+          enabled_lifetime_type: DISABLE_NEVER
+          item_prototypes:
+            - uuid: bc6bc82ed8d345b2869a95dd10f2cca5
+              name: 'KVM: cpu_util on {#DOMAINNAME}'
+              key: 'kvm.domain.cpu_util[{#DOMAINNAME}]'
+              delay: '60'
+              history: 7d
+              value_type: FLOAT
+              trends: 90d
+              units: '%'
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+              tags:
+                - tag: Application
+                  value: kvm
+            - uuid: e09719f05aef46f18fcd542e10047ae7
+              name: 'KVM: mem_usage on  {#DOMAINNAME}'
+              key: 'kvm.domain.mem_usage[{#DOMAINNAME}]'
+              delay: '60'
+              history: 7d
+              value_type: FLOAT
+              trends: 90d
+              units: '%'
+              tags:
+                - tag: Application
+                  value: kvm
+            - uuid: 5a58991c7d124a4bab0ed8f0f69e5985
+              name: 'KVM: net_in on {#DOMAINNAME}'
+              key: 'kvm.domain.net_in[{#DOMAINNAME}]'
+              delay: '60'
+              history: 7d
+              value_type: FLOAT
+              trends: 90d
+              units: bps
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+              tags:
+                - tag: Application
+                  value: kvm
+            - uuid: 71a0576179ef455f8acd1cce9938ea00
+              name: 'KVM: net_out on {#DOMAINNAME}'
+              key: 'kvm.domain.net_out[{#DOMAINNAME}]'
+              delay: '60'
+              history: 7d
+              value_type: FLOAT
+              trends: 90d
+              units: bps
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+              tags:
+                - tag: Application
+                  value: kvm
+            - uuid: 09f81103398a43818b0d32e85edc8eba
+              name: 'KVM: disk read bytes per second on [{#DOMAINNAME}]'
+              key: 'kvm.domain.rd_bytes[{#DOMAINNAME}]'
+              delay: '30'
+              history: 7d
+              value_type: FLOAT
+              trends: 90d
+              units: B
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+              tags:
+                - tag: Application
+                  value: kvm
+            - uuid: 92039cfb75aa4db6becb96630eb83127
+              name: 'KVM: disk write bytes per second on [{#DOMAINNAME}]'
+              key: 'kvm.domain.wr_bytes[{#DOMAINNAME}]'
+              delay: '60'
+              history: 7d
+              value_type: FLOAT
+              trends: 90d
+              units: B
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+              tags:
+                - tag: Application
+                  value: kvm
+          graph_prototypes:
+            - uuid: 29658114a9734bd1aa6d061770e91dee
+              name: 'KVM: cpu_util on [{#DOMAINNAME}]'
+              graph_items:
+                - color: 1A7C11
+                  calc_fnc: ALL
+                  item:
+                    host: zabbix-kvm
+                    key: 'kvm.domain.cpu_util[{#DOMAINNAME}]'
+            - uuid: 670d94ecf9f2485381240617ae311c31
+              name: 'KVM: disk usage on [{#DOMAINNAME}]'
+              graph_items:
+                - color: 1A7C11
+                  calc_fnc: ALL
+                  item:
+                    host: zabbix-kvm
+                    key: 'kvm.domain.rd_bytes[{#DOMAINNAME}]'
+                - sortorder: '1'
+                  color: '274482'
+                  calc_fnc: ALL
+                  item:
+                    host: zabbix-kvm
+                    key: 'kvm.domain.wr_bytes[{#DOMAINNAME}]'
+            - uuid: 4cb7429a986749a2bde55fb1e1009ad8
+              name: 'KVM: Memory usage on [{#DOMAINNAME}]'
+              graph_items:
+                - color: 1A7C11
+                  calc_fnc: ALL
+                  item:
+                    host: zabbix-kvm
+                    key: 'kvm.domain.mem_usage[{#DOMAINNAME}]'
+            - uuid: d6cf75d3579e4db991e87f5c696a209b
+              name: 'KVM: Network traffic on [{#DOMAINNAME}]'
+              graph_items:
+                - color: 1A7C11
+                  calc_fnc: ALL
+                  item:
+                    host: zabbix-kvm
+                    key: 'kvm.domain.net_in[{#DOMAINNAME}]'
+                - sortorder: '1'
+                  color: '274482'
+                  calc_fnc: ALL
+                  item:
+                    host: zabbix-kvm
+                    key: 'kvm.domain.net_out[{#DOMAINNAME}]'
